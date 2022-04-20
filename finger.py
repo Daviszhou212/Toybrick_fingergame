@@ -110,7 +110,7 @@ def judge_gesture(angle_list, hand_point_2d):
 
 # ------主程序---------
 # 开发板中一般端口为10或者11
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(10)
 mpHands = solutions.hands
 hands = mpHands.Hands()
 mpDraw = solutions.drawing_utils
