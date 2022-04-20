@@ -93,6 +93,9 @@ while True:
                     os.system('python3 escape_dragon.py')
                 if current==3:
                     os.system('python3 ZombieMobGame.py')
+                if current==4:
+                    os.system('python3 OrbitDemo.py')
+                    
     #display trivia data
     list.show_game()
     
