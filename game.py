@@ -8,9 +8,6 @@ import pygame
 import sys
 import numpy as np
 from pygame.locals import *
-from collections import Counter
-from socket import *
-from time import ctime
 import json
 import select
 import socket
