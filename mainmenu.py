@@ -88,10 +88,11 @@ while True:
                 list.handle_input(current%(list.total-1))
             elif event.key == pygame.K_SPACE:
                 if current==1:
-                    print("")
+                    os.system('python3 game.py')
                 if current==2:
                     os.system('python3 escape_dragon.py')
-
+                if current==3:
+                    os.system('python3 ZombieMobGame.py')
     #display trivia data
     list.show_game()
     

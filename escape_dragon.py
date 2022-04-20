@@ -1,6 +1,3 @@
-# Escape The Dragon Game
-# Chapter 7
-
 import sys, time, random, math, pygame,os
 from pygame.locals import *
 
