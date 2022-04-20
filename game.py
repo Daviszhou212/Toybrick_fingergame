@@ -19,10 +19,6 @@ import socket
 screen = pygame.display.set_mode((660, 650))
 pygame.display.set_caption('井字棋！')
 pygame.init()
-event_left = pygame.event.custom_type()
-event_right = pygame.event.custom_type()
-event_up = pygame.event.custom_type()
-event_down = pygame.event.custom_type()
 # 图片导入
 img_background = pygame.image.load('./image/back.jpg').convert()
 img_circle = pygame.image.load('./image/circle.jpg').convert()
@@ -53,8 +49,9 @@ def draw_background():
     screen.blit(img_background, (-100, 0))
     pygame.display.update()
 
+
 # 绘制标记当前位置的三角形
-def drawRect(i, j):
+def drawTriangle(i, j):
     global last_i
     global last_j
     x = chessboard[i][j][0]
@@ -71,6 +68,7 @@ def drawRect(i, j):
 # 利用按键下棋
 def set_chess():
     flag = 0
+    # 上一次的目标位置
     global last_x
     global last_y
     current_x = last_x
@@ -78,6 +76,7 @@ def set_chess():
     if event.type == KEYDOWN:
         if event.key == K_d:
             current_y = current_y + 1
+            # 控制坐标，不能超出边界
             if current_y>2:
                 current_y = 2
         if event.key == K_a:
@@ -92,20 +91,23 @@ def set_chess():
             current_x = current_x - 1
             if current_x<0:
                 current_x = 0
-        if event.key == K_RETURN:
-            flag = 1
         if event.key == K_SPACE:
             flag = 1
+    # 更新全局变量，保存该次位置
     last_x = current_x
     last_y = current_y
-    drawRect(last_x, last_y)
+    drawTriangle(last_x, last_y)
+    # 当前位置没有棋子占用
     if flag == 1 and chess_exist[current_x][current_y] == 0:
+        # 添加列表项 保存位置
         circle.append([current_x, current_y])
         circle_x.append(circle[-1][0])
         circle_y.append(circle[-1][1])
+        # 将坐标位置打包
         msg.extend((current_x, current_y))
         chess_exist[current_x][current_y] = 1
         pygame.display.update()
+        # 成功落子
         return 1
 
 
@@ -119,10 +121,12 @@ def draw_chess():
 
 # 枚举叉赢的情况
 def cross_win():
+    # 同一行有三个相同棋子
     win_case = chess_exist.count([2, 2, 2])
     if win_case == 1:
         return 1
     chessexist = np.mat(chess_exist)
+    # 对角线有三个相同棋子
     Diagonal = [chessexist[i, i] for i in range(3)]
     win_case = Diagonal.count([2])
     if win_case == 3:
@@ -131,6 +135,7 @@ def cross_win():
     win_case = another_Diagonal.count([2])
     if win_case == 3:
         return 1
+    # 同一列有三个相同棋子
     column = chessexist.T.tolist()
     win_case = column.count([2, 2, 2])
     if win_case == 1:
@@ -138,7 +143,7 @@ def cross_win():
     return 0
 
 
-#
+# 枚举圈赢的情况
 def circle_win():
     win_case = chess_exist.count([1, 1, 1])
     if win_case == 1:
@@ -189,7 +194,7 @@ try:
 finally:
     s.close()
 # 定义服务器
-print(ip)
+print("当前IP地址为：",ip)
 HOST = ip
 PORT = 10000
 BUFSIZE = 1024

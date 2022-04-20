@@ -42,12 +42,13 @@ chess_kind = 1  # 1为黑棋，0为白棋
 cross_x, cross_y, circle_x, circle_y = [], [], [], []  # white_chess_x
 
 
+# 绘制棋盘
 def draw_Chessboard():
     screen.blit(img_background, (-100, 0))
     pygame.display.update()
 
 
-# 默认棋子类型为0
+# 控制方式：鼠标
 def set_chess():
     if event.type == MOUSEBUTTONDOWN:
         pos = pygame.mouse.get_pos()
@@ -66,6 +67,7 @@ def set_chess():
                         return 1
 
 
+# 在棋盘上绘制棋子
 def draw_chess():
     for i in circle:
         screen.blit(img_circle, (50 + i[1] * 200, 50 + i[0] * 200))
@@ -95,7 +97,7 @@ def cross_win():
     return 0
 
 
-#
+# 圈棋赢得对局的情况
 def circle_win():
     win_case = chess_exist.count([1, 1, 1])
     if win_case == 1:
@@ -116,6 +118,7 @@ def circle_win():
     return 0
 
 
+# 判断游戏是否结束
 def gameover():
     if cross_win()==1:
         return 1
@@ -124,6 +127,7 @@ def gameover():
     return 2
 
 
+# pugame中绘制文本
 def draw_text(text, x, y, size, fontColor=(0,0,0), backgroudColor=(255,255,255)):
     pygame.font.init()
     fontObj = pygame.font.SysFont('SimHei', size)
@@ -139,7 +143,7 @@ def draw_text(text, x, y, size, fontColor=(0,0,0), backgroudColor=(255,255,255))
 draw_Chessboard()
 settable = 0
 # 定义客户端名称
-HOST = '10.162.19.220'
+HOST = '192.168.43.29'
 PORT = 10000
 BUFSIZE = 1024
 ADDR = (HOST, PORT)
@@ -152,10 +156,8 @@ while True:
     for r in rs:
         if r is Client:
             data, addr = r.recvfrom(BUFSIZE)
-            print(data)
-            draw_text('你的回合', 300, 20, 15)
             data = json.loads(data)
-            print(data)
+            draw_text('你的回合', 300, 20, 15)
             settable = 1
             circle.append(data)
             chess_exist[data[0]][data[1]] = 1
@@ -167,6 +169,7 @@ while True:
             pygame.quit()
             sys.exit()
         if settable == 1:
+            # set_chess()返回1，表示已经下完了一步，轮到对方
             if set_chess() == 1:
                 draw_text('对手回合', 300, 20, 15)
                 settable = 0
@@ -174,6 +177,7 @@ while True:
                 Client.sendto(msg1.encode(), ADDR)
                 msg = []
     draw_chess()
+    # 赢得对局
     if gameover() == 1:
         draw_text('WIN！', 350, 320, 55,(255, 0, 0), (255, 255, 255))
         while True:
@@ -181,6 +185,7 @@ while True:
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
+    # 输了
     elif gameover() == 0:
         draw_text('LOSE！', 350, 320, 55,(255, 0, 0), (255, 255, 255))
         while True:
